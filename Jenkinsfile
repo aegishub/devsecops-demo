@@ -45,7 +45,7 @@ pipeline {
             }
       }
 
-/*       stage('Vulnerability Scan - DependencyCheck') {
+      stage('Vulnerability Scan - DependencyCheck') {
             steps {
               sh "mvn dependency-check:check"
             }
@@ -54,7 +54,7 @@ pipeline {
                 dependencyCheckPublisher pattern: 'target/dependency-check-report.xml'
               }
             }
-      } */
+      }
 
       stage('Docker Build and Push') {
             steps {
@@ -73,6 +73,20 @@ pipeline {
                 sh "kubectl apply -f k8s_deployment_service.yaml"
               }
             }
-        }  
+        }
+
+//       post {
+//        always {
+//          junit 'target/surefire-reports/*.xml'
+//          jacoco execPattern: 'target/jacoco.exec'
+//          pitmutation mutationStatsFile: '**/target/pit-reports/**/mutations.xml'
+//          dependencyCheckPublisher pattern: 'target/dependency-check-report.xml'
+//         } 
+
+//        // success {
+//        // }
+//        // failure {
+//        //} 
+//      }  
     }
 }
