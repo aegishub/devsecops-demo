@@ -1,5 +1,13 @@
 package main
 
+exists_in_list(element, list) {
+  contains(element, list[_])
+}
+
+image_whitelist = [
+ "adoptopenjdk/openjdk8:alpine-slim"
+]
+
 # Do Not store secrets in ENV variables
 secrets_env = [
     "passwd",
@@ -21,11 +29,14 @@ deny[msg] {
     msg = sprintf("Line %d: Potential secret in ENV key found: %s", [i, val])
 }
 
-# Only use trusted base images
+# Do not use spliting in image name, it is not private image. 
+# Added the exeptions for whitelisted images 
 deny[msg] {
     input[i].Cmd == "from"
+    image := input[i].Value[0]
     val := split(input[i].Value[0], "/")
     count(val) > 1
+    not exists_in_list(image, image_whitelist)
     msg = sprintf("Line %d: use a trusted base image", [i])
 }
 
@@ -78,13 +89,17 @@ forbidden_users = [
     "0"
 ]
 
-# deny[msg] {
-#    command := "user"
-#    users := (name | input[i].Cmd == "user"; name := input[i].Value]
-#    lastuser := users[count(users)-1]
-#    contains(lower(lastuser[_]), forbidden_users[_])
-#    msg = sprintf("Line %d: Last USER directive (USER %s) is forbidden", [i, lastuser])
-#}
+deny[msg] {
+    command := "user"
+    input[i].Cmd == "user"
+    name := input[i].Value[0]
+    users := name
+    lastuser := users[count(users)-1]
+    contains(lower(lastuser[_]), forbidden_users[_])
+    msg = sprintf("Line %d: Last USER directive (USER %s) is forbidden", [i, lastuser])
+}
+
+
 
 # Do not sudo
 deny[msg] {
@@ -103,5 +118,8 @@ multi_stage = true {
 }
 deny[msg] {
     multi_stage == false
+    input[i].Cmd == "from"
+    image := input[i].Value[0]
+    not exists_in_list(image, image_whitelist)
     msg = sprintf("You COPY, but do not appear to use multi-stage builds...", [])
 }
