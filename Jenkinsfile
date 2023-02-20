@@ -40,7 +40,7 @@ pipeline {
             }
       } */
 
-      stage('Vulnerability Scan') {
+      stage('Vulnerability Scan - Docker') {
             steps {
               parallel(
                 "Dependency Scan": {
@@ -50,7 +50,7 @@ pipeline {
                   sh "bash trivy-docker-image-scan.sh"
                 },
                 "OPA conftest": {
-                  sh 'docker run --rm -v $(pwd):/project openpolicyagent/conftest test --policy opa-conftest.rego Dockerfile'
+                  sh 'docker run --rm -v $(pwd):/project openpolicyagent/conftest test --policy opa-docker-rules.rego Dockerfile'
                 }
               )
             }
@@ -63,6 +63,12 @@ pipeline {
                 sh 'sudo docker build -t zelkoalex/numeric-app:""$GIT_COMMIT"" .'
                 sh 'docker push zelkoalex/numeric-app:""$GIT_COMMIT""'
               }
+            }
+      }
+
+      stage('Vulnerability Scan - Kubernetes') {
+            steps {
+              sh 'docker run --rm -v $(pwd):/project openpolicyagent/conftest test --policy opa-k8s-rules.rego k8s_deployment_service.yaml'
             }
       }
 
