@@ -6,7 +6,7 @@ pipeline {
     containerName = "devsecops-container"
     serviceName = "devsecops-svc"
     imageName = "zelkoalex/numeric-app:${GIT_COMMIT}"
-    applicationURL = "http://35.217.63.26:30447"
+    applicationURL = "http://35.217.63.26:32419"
     applicationURI = "/increment/99"
   }
 
@@ -97,7 +97,6 @@ pipeline {
             }
       }
 
-
       stage('K8S Deployment - DEV') {
             steps {
               parallel(
@@ -122,6 +121,23 @@ pipeline {
               }
             }
         } */
+      
+      stage('Integration Tests - DEV') {
+            steps {
+              script {
+                try {
+                  withKubeConfig([credentialsId: 'kubeconfig']) {
+                    sh "bash integration-test.sh"
+                  }
+                } catch (e) {
+                  withKubeConfig([credentialsId: 'kubeconfig']) {
+                    sh "kubectl -n default rollout undo deploy ${deploymentName}"
+                  }
+                  throw e
+                }
+              }
+            }
+      }
     }
 
     post {
