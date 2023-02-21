@@ -7,7 +7,7 @@ pipeline {
     serviceName = "devsecops-svc"
     imageName = "zelkoalex/numeric-app:${GIT_COMMIT}"
     applicationURL = "http://35.217.63.26"
-    applicationURI = "increment/99"
+    applicationURI = "/increment/99"
   }
 
   stages {
