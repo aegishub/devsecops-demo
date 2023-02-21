@@ -119,7 +119,7 @@
 				</dependency>
 			</dependencies>
 			<configuration>
-				<mutationThreshold>0</mutationThreshold>
+				<mutationThreshold>60</mutationThreshold>
 				<outputFormats>
 					<outputFormat>XML</outputFormat>
 					<outputFormat>HTML</outputFormat>
