@@ -1,4 +1,4 @@
-package com.devsecops;
+package com.devsecops.tests;
 
 
 import org.junit.Test;
