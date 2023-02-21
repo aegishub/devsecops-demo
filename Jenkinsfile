@@ -6,7 +6,7 @@ pipeline {
     containerName = "devsecops-container"
     serviceName = "devsecops-svc"
     imageName = "zelkoalex/numeric-app:${GIT_COMMIT}"
-    applicationURL = "http://35.217.63.26:32419"
+    applicationURL = "http://35.217.63.26"
     applicationURI = "increment/99"
   }
 
@@ -138,6 +138,15 @@ pipeline {
               }
             }
       }
+
+      stage('OWASP ZAP - DAST') {
+              steps {
+                withKubeConfig([credentialsId: 'kubeconfig']) {
+                  sh 'bash zap.sh'
+                }
+              }
+      }
+
     }
 
     post {
