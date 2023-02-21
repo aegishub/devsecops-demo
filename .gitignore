@@ -13,9 +13,6 @@
 # Vscode settings
 .vscode/
 
-# MacOS system dirs
-.DS_Store
-
 # Package Files #
 *.jar
 *.war
