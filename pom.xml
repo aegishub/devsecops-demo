@@ -22,6 +22,13 @@
 	</properties>
 
 	<dependencies>
+
+		<dependency>
+			<groupId>org.pitest</groupId>
+			<artifactId>pitest-junit5-plugin</artifactId>
+			<version>1.1.2</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
